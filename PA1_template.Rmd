@@ -1,18 +1,29 @@
 # Reproducible Research: Peer Assessment 1
-
+This document will explore relationships within walking data from an anonymous individual whom had their steps tracked in 5 minute intervals for a period of 61 days.
 
 ## Loading and preprocessing the data
+In order to assess the data we first need to load the data into R.  The data has already been unzipped into the working directory and is named 'activity.csv'.  The data will be loaded into a variable called 'data'.
 
+```{r}
+data <- read.csv("activity.csv")
+```
 
 
 ## What is mean total number of steps taken per day?
 
-
+```{r}
+stepsPerDay <- aggregate(data$steps,by=list((data$date)),sum) 
+hist(stepsPerDay$x)
+median(stepsPerDay$x, na.rm=TRUE)
+mean(stepsPerDay$x, na.rm=TRUE)
+```
 
 ## What is the average daily activity pattern?
-
-
-
+```{r}
+stepsPerInterval <- aggregate(data$steps,by=list((data$interval)),mean, na.rm=TRUE)
+max(stepsPerInterval$x)
+stepsPerInterval[stepsPerInterval$x == max(stepsPerInterval$x),1]
+```
 ## Imputing missing values
 
 
