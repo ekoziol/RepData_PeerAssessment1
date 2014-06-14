@@ -11,35 +11,28 @@ data <- read.csv("activity.csv")
 
 
 ## What is mean total number of steps taken per day?
-
+In order to get the total number of steps per day, we first need to aggregate the data by date.
 
 ```r
 stepsPerDay <- aggregate(data$steps,by=list((data$date)),sum)
-names(stepsPerDay) <- c("day", "totalSteps", xlab = "Total steps per day", ylab = "Frequency of days for total steps")
+names(stepsPerDay) <- c("day", "totalSteps")
 ```
 
-```
-## Error: 'names' attribute [4] must be the same length as the vector [2]
-```
+Next, let us plot a histogram of the Total steps taken per day.  We will also produce the mean and median for the Total steps per day
+
 
 ```r
-hist(stepsPerDay$totalSteps, col = "green")
+hist(stepsPerDay$totalSteps, col = "green", main = "Histogram of Total Steps Taken per Day", xlab = "Total steps per day", ylab = "Frequency of Total Steps")
 ```
 
-```
-## Error: 'x' must be numeric
-```
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
 
 ```r
 median(stepsPerDay$totalSteps, na.rm=TRUE)
 ```
 
 ```
-## Warning: is.na() applied to non-(list or vector) of type 'NULL'
-```
-
-```
-## NULL
+## [1] 10765
 ```
 
 ```r
@@ -47,14 +40,12 @@ mean(stepsPerDay$totalSteps, na.rm=TRUE)
 ```
 
 ```
-## Warning: argument is not numeric or logical: returning NA
-```
-
-```
-## [1] NA
+## [1] 10766
 ```
 
 ## What is the average daily activity pattern?
+In order to assess how many steps on average are taken during a given interval, we need to aggregate the data by interval.  
+
 
 ```r
 stepsPerInterval <- aggregate(data$steps,by=list((data$interval)),mean, na.rm=TRUE)
@@ -62,7 +53,10 @@ names(stepsPerInterval) <- c("interval", "averageSteps")
 plot(stepsPerInterval, type="l", main = "Average Steps Per Interval", xlab="Interval", ylab="Average Steps")
 ```
 
-![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
+
+Now we can identify the interval that has the largest number of average steps as well as the average number of steps for that interval.  This is given by:
+
 
 ```r
 max(stepsPerInterval$averageSteps)
@@ -73,12 +67,15 @@ max(stepsPerInterval$averageSteps)
 ```
 
 ```r
-stepsPerInterval[stepsPerInterval$averageSteps == max(stepsPerInterval$averageSteps),1]
+largestStepInterval <- stepsPerInterval[stepsPerInterval$averageSteps == max(stepsPerInterval$averageSteps),1]
+largestStepInterval
 ```
 
 ```
 ## [1] 835
 ```
+Thus the largest interval is at 835.  This likely takes place while the subject is going into work.
+
 ## Imputing missing values
 First, let us determine the number of missing values (NA) in the data set:
 
@@ -114,10 +111,10 @@ We now how to make a histogram of our new data:
 ```r
 stepsPerDayFixed <- aggregate(dataFixed$steps,by=list((dataFixed$date)),sum)
 names(stepsPerDayFixed) <- c("day", "totalSteps")
-hist(stepsPerDayFixed$totalSteps)
+hist(stepsPerDayFixed$totalSteps, col = "purple", xlab = "Total steps per day", ylab = "Frequency of days for total steps", main = "Histogram of Total Steps per day with NA replacement" )
 ```
 
-![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7.png) 
+![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9.png) 
 
 ```r
 median(stepsPerDayFixed$totalSteps)
@@ -134,21 +131,34 @@ mean(stepsPerDayFixed$totalSteps)
 ```
 ## [1] 10766
 ```
+
+You can see that the median is now equal to the mean, while before adjusting for NA values the mean and median differed slightly. However, the mean remained the same from when we originally calculated it, not accounting for NA values.  The mean did not change because we set all the NA values equal to the mean for a given interval.  Thus, the NA values have no real impacting on adjusting the value of the calculated mean. 
+
 ## Are there differences in activity patterns between weekdays and weekends?
+We first need to create a separate column in the data that tells us whether or not a given observation is on a weekday or weekend.
 
 ```r
 dataFixed$dayOfWeek <- weekdays(as.Date(dataFixed$date))
 dataFixed$weekend <- dataFixed$dayOfWeek == "Sunday" | dataFixed$dayOfWeek == "Saturday"
 dataFixed[dataFixed$weekend == TRUE, 'weekend'] <- "weekend"
 dataFixed[dataFixed$weekend == FALSE, 'weekend'] <- "weekday"
+```
 
+Next we need to recreate the steps per interval dataframe that we made earlier except this time we will use the fixed data set.
+
+
+```r
 stepsPerIntervalFixed <- aggregate(dataFixed$steps,by=list((dataFixed$interval), (dataFixed$weekend)),mean, na.rm=TRUE)
 names(stepsPerIntervalFixed) <- c("interval", "weekend", "averageSteps")
+```
 
+
+Finally we can plot the average number of steps taken per interval which is aggregated between weekdays and weekends. We will use the lattice library to accomplish this plot.
+
+```r
+library("lattice")
 xyplot(stepsPerIntervalFixed$averageSteps ~ stepsPerIntervalFixed$interval | stepsPerIntervalFixed$weekend, data, type="l", layout = c(1,2), xlab = "Interval", ylab = "Number of steps")
 ```
 
-```
-## Error: could not find function "xyplot"
-```
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
 
