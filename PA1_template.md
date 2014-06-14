@@ -97,6 +97,7 @@ sum(is.na(data$steps))/nrow(data)*100
 ## [1] 13.11
 ```
 
+#### Strategy for imputating NA values
 With that proportion of data missing, we cannot just fill the na values in as zeros.  Therefore, it would be best to fill the data with the mean value for that interval.  We should fill by interval, since that is the level that the data is missing on.  We do not want to skew the data since we are not sure what the data actually is.  Let us create this 'fixed' data set.
 
 
