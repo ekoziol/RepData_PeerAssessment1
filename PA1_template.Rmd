@@ -73,7 +73,7 @@ median(stepsPerDayFixed$totalSteps)
 mean(stepsPerDayFixed$totalSteps)
 ```
 
-You can see that the median is now equal to the mean, while before adjusting for NA values the mean and median differed slightly. However, the mean remained the same from when we originally calculated it, not accounting for NA values.  The mean did not change because we set all the NA values equal to the mean for a given interval.  Thus, the NA values have no real impacting on adjusting the value of the calculated mean. 
+You can see that the median is now equal to the mean, while before adjusting for NA values the mean and median differed slightly. However, the mean remained the same from when we originally calculated it, not accounting for NA values.  The mean did not change because we set all the NA values equal to the mean for a given interval.  Thus, the NA values have no real impacting on adjusting the value of the calculated mean. As you can see, the frequency for the largest bar has increased dramatically in the histogram.  This is attributed to us changing all NA values to the mean for a given interval.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 We first need to create a separate column in the data that tells us whether or not a given observation is on a weekday or weekend.
